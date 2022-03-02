@@ -569,24 +569,24 @@ router.get('/download/pinterest', async (req, res, next) => {
 router.get('/download/tiktok', async (req, res, next) => {
           var apikey = req.query.apikey
           var url = req.query.url
+var headers = {
+    "user-agent": "BOB",
+    "referer": "https://www.tiktok.com/",
+    "cookie": "tt_webid_v2=BOB"
+}
        	if(!apikey) return res.json(loghandler.apikey)
        if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
-        if(listkey.includes(apikey)){
-       TikTokScraper.getVideoMeta(url, options)
+       TikTokScraper.getVideoMeta(url, headers)
          .then(vid => {
              console.log(vid)
              res.json({
                  status: true,
-                 creator: `${creator}`,
                  videoNoWm: vid
              })
          })
          .catch(e => {
              res.json(loghandler.invalidlink)
          })
-} else {
-  res.json(loghandler.apikey)
-}
 })
 router.get('/download/ytmp3', async (req, res, next) => {
           var apikey = req.query.apikey
