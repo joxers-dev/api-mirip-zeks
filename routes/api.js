@@ -33,9 +33,12 @@ var fetch = require('node-fetch');
 var cheerio = require('cheerio');
 var request = require('request');
 var fs = require('fs');
+var TikTokScraper = require('tiktok-scraper');
 var router  = express.Router();
 var creator = 'ZeeoneOfc' // ubah jadi nama lu
 const listkey = ["Alphabot","Zeeone","ZeeoneOfc"]; // ubah apikey nya, tambah aja klo mau
+
+var options = require(__path + '/lib/options.js');
 
 var { otakudesu, covid, ongoing, komiku, tebakgambar, surah, sholat, lirik, chara,wattpad, playstore, linkwa, pinterest ,igdl,igstory, igstalk,twitter,fbdown,youtube,ttdownloader} = require(__path + '/lib/scrape.js');
 var { color, bgcolor } = require(__path + '/lib/color.js');
@@ -569,17 +572,18 @@ router.get('/download/tiktok', async (req, res, next) => {
        	if(!apikey) return res.json(loghandler.apikey)
        if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
         if(listkey.includes(apikey)){
-       ttdownloader(url)
-	.then(data => {
-		var result = data;
-		res.json({
-			result
-		})
-		})
+       TikTokScraper.getVideoMeta(url, options)
+         .then(vid => {
+             console.log(vid)
+             res.json({
+                 status: true,
+                 creator: `${creator}`,
+                 videoNoWm: vid
+             })
+         })
          .catch(e => {
-         	console.log(e);
-         	res.json(loghandler.error)
-})
+             res.json(loghandler.invalidlink)
+         })
 } else {
   res.json(loghandler.apikey)
 }
